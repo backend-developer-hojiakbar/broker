@@ -147,7 +147,9 @@
     "results": {
         "title": "Анализ Завершен",
         "subtitle": "Найдено продуктов: {{count}}. Выберите продукт, чтобы увидеть поставщиков.",
-        "exportButton": "Экспорт в CSV",
+        "exportButton": "Экспорт",
+        "exportButtonCsv": "Экспорт в CSV",
+        "exportButtonExcel": "Экспорт в Excel",
         "newAnalysisButton": "Новый Анализ",
         "selectProductPrompt": "Выберите продукт из списка, чтобы просмотреть его потенциальных поставщиков.",
         "summary": {

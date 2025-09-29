@@ -147,7 +147,9 @@
     "results": {
         "title": "Таҳлил Якунланди",
         "subtitle": "{{count}} та маҳсулот топилди. Етказиб берувчиларни кўриш учун маҳсулотни танланг.",
-        "exportButton": "CSV га экспорт",
+        "exportButton": "Экспорт",
+        "exportButtonCsv": "CSV га экспорт",
+        "exportButtonExcel": "Excel га экспорт",
         "newAnalysisButton": "Янги Таҳлил",
         "selectProductPrompt": "Потенциал етказиб берувчиларни кўриш учун рўйхатдан маҳсулот танланг.",
         "summary": {

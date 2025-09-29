@@ -147,7 +147,9 @@
     "results": {
         "title": "Tahlil Yakunlandi",
         "subtitle": "{{count}} ta mahsulot topildi. Yetkazib beruvchilarni ko'rish uchun mahsulotni tanlang.",
-        "exportButton": "CSV ga eksport",
+        "exportButton": "Eksport",
+        "exportButtonCsv": "CSV ga eksport",
+        "exportButtonExcel": "Excel ga eksport",
         "newAnalysisButton": "Yangi Tahlil",
         "selectProductPrompt": "Potentsial yetkazib beruvchilarni ko'rish uchun ro'yxatdan mahsulot tanlang.",
         "summary": {

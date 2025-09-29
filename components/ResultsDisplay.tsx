@@ -10,7 +10,7 @@ import { StatCard } from './ui/StatCard';
 import { getUzsPrice, parsePrice } from '../utils/currency';
 import { researchSingleProduct } from '../services/geminiService';
 import BidCalculator from './BidCalculator';
-
+import * as XLSX from 'xlsx';
 
 const ResultsDisplay: React.FC<{ result: AnalysisResult; onNewAnalysis: () => void; getKnowledgeBaseContent: () => string; }> = ({ result, onNewAnalysis, getKnowledgeBaseContent }) => {
   const [editableResult, setEditableResult] = useState<AnalysisResult>(result);
@@ -222,6 +222,81 @@ const ResultsDisplay: React.FC<{ result: AnalysisResult; onNewAnalysis: () => vo
     document.body.removeChild(link);
   };
 
+  const handleExportExcel = () => {
+    // Prepare data for Excel export
+    const data = [];
+    
+    // Add headers
+    const headers = [
+      t('csv.header.position'),
+      t('csv.header.productName'),
+      t('csv.header.features'),
+      t('csv.header.unit'),
+      t('csv.header.quantity'),
+      t('csv.header.startPrice'),
+      t('csv.header.supplier'),
+      t('csv.header.unitPriceOriginal'),
+      t('csv.header.totalPriceUzs'),
+      t('csv.header.phone'),
+      t('csv.header.website'),
+      t('csv.header.region'),
+    ];
+    
+    data.push(headers);
+
+    editableResult.products.forEach(product => {
+        if (product.suppliers.length > 0) {
+            product.suppliers.forEach(supplier => {
+                const originalPrice = parsePrice(supplier.price);
+                const totalUzs = getUzsPrice(supplier.price) * product.quantity;
+
+                const originalPriceStr = originalPrice.amount === Infinity ? 'N/A' : `${originalPrice.amount} ${originalPrice.currency}`;
+                const totalUzsStr = totalUzs === Infinity ? 'N/A' : `${totalUzs} UZS`;
+
+                const row = [
+                    product.positionNumber ?? '',
+                    product.name ?? '',
+                    product.features ?? '',
+                    product.unit ?? '',
+                    product.quantity ?? 0,
+                    product.startPrice ?? 'N/A',
+                    supplier.companyName ?? '',
+                    originalPriceStr,
+                    totalUzsStr,
+                    supplier.phone ?? '',
+                    supplier.website ?? '',
+                    supplier.region ?? ''
+                ];
+                data.push(row);
+            });
+        } else {
+             const row = [
+                product.positionNumber ?? '',
+                product.name ?? '',
+                product.features ?? '',
+                product.unit ?? '',
+                product.quantity ?? 0,
+                product.startPrice ?? 'N/A',
+                t('supplierTable.noSuppliers'),
+                '',
+                '',
+                '',
+                '',
+                ''
+            ];
+            data.push(row);
+        }
+    });
+
+    // Create workbook and worksheet
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Tender Analysis');
+    
+    // Export to Excel file
+    XLSX.writeFile(wb, `tender_analysis_${editableResult.lotId}.xlsx`);
+  };
+
   return (
     <div className="p-6 md:p-8 space-y-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -231,7 +306,10 @@ const ResultsDisplay: React.FC<{ result: AnalysisResult; onNewAnalysis: () => vo
             </div>
             <div className="flex items-center gap-4 flex-shrink-0">
                 <Button onClick={handleExport} variant="secondary">
-                    {t('results.exportButton')}
+                    {t('results.exportButtonCsv')}
+                </Button>
+                <Button onClick={handleExportExcel} variant="secondary">
+                    {t('results.exportButtonExcel')}
                 </Button>
                 <Button onClick={onNewAnalysis}>
                     {t('results.newAnalysisButton')}
