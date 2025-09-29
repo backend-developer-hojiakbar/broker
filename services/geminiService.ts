@@ -6,7 +6,7 @@ import { extractTextFromFile } from '../utils/fileExtractor';
 
 
 // --- CONFIGURATION ---
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || process.env.API_KEY });
 const SERPER_API_KEY = '267bb61332ef769cb728f3607a8a8239660cf3d7'; // User-provided Serper API Key
 
 const languageMap = {
@@ -416,7 +416,7 @@ const getSearchQueriesForMultipleProducts = async (
     Follow this 5-query strategy for each product:
     1.  **Primary Uzbek Local Search:** Use the \`uzbekLatin\` name for a price check in a major city. (e.g., "Konditsioner Midea 12 narxi Toshkent")
     2.  **Russian Language Search:** Use the \`russianLatin\` name with a Russian purchase keyword. (e.g., "Кондиционер Midea 12 купить в Ташкенте")
-    3.  **Technical Deep-Dive Search (Query 1 - CRITICAL):** Identify the most unique and searchable specification from \`features\` (like a model number, part number, or very specific dimension). Combine this with the product name. This is your highest priority query. (e.g., "Midea AF-12N8D6-I narxi")
+    3.  **Technical Deep-Dive Search (Query 1 - CRITICAL):** Identify the most unique and searchable specification from \`features\` (like a model number, part number, or very specific dimension). Combine this with the product name. This is your highest priority query. (e.g., "Midea AF-12N8D6-I narxi Uzbekistan")
     4.  **Technical Deep-Dive Search (Query 2 - CRITICAL):** Identify 2-3 other key specifications from \`features\` (e.g., "inverter", "12000 BTU", "R32 freon"). Combine these with the product name. (e.g., "Konditsioner 12000 BTU inverter R32 freon sotib olish")
     5.  **Broad Marketplace Search:** Use a slightly more generic version of the name to search on a popular local marketplace. (e.g., "Konditsioner Midea 12 olx.uz")
 
@@ -634,7 +634,12 @@ const findSuppliersForProducts = async (
             // STEP 3 (per product): Analyze Search Results
             if (uniqueResults.length > 0) {
                 const searchResultsText = uniqueResults
-                    .map((r, index) => `[SEARCH RESULT ${index + 1}]\nTitle: ${r.title}\nLink: ${r.link}\n${r.priceRange ? `Price: ${r.priceRange}\n` : ''}Snippet: ${r.snippet}\n[END SEARCH RESULT ${index + 1}]`)
+                    .map((r, index) => `[SEARCH RESULT ${index + 1}]
+Title: ${r.title}
+Link: ${r.link}
+${r.priceRange ? `Price: ${r.priceRange}
+` : ''}Snippet: ${r.snippet}
+[END SEARCH RESULT ${index + 1}]`)
                     .join('\n\n');
                 
                 // Add a delay BEFORE the main Gemini call inside the loop.
